@@ -13,6 +13,12 @@ export const BackgroundBeamsWithCollision = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const parentRef = useRef<HTMLDivElement>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  // Set isClient to true after component mounts
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const colorThemes = [
     "from-primary via-primary/70 to-transparent",
@@ -24,20 +30,29 @@ export const BackgroundBeamsWithCollision = ({
     "from-emerald-500 via-green-500 to-transparent",
   ];
 
-  // Generate random color theme index
+  // Generate random color theme index - return consistent value on server, random on client
   const getRandomColorTheme = () => {
+    if (!isClient) {
+      return colorThemes[0]; // Default value for server rendering
+    }
     return colorThemes[Math.floor(Math.random() * colorThemes.length)];
   };
 
-  // Generate random width class
+  // Generate random width class - return consistent value on server, random on client
   const getRandomWidth = () => {
+    if (!isClient) {
+      return "w-1"; // Default value for server rendering
+    }
     const widths = ["w-0.5", "w-1", "w-1.5", "w-2"];
     return widths[Math.floor(Math.random() * widths.length)];
   };
 
   const getRandomHeight = () => {
-    const widths = ["h-4", "h-6", "h-8", "h-10"];
-    return widths[Math.floor(Math.random() * widths.length)];
+    if (!isClient) {
+      return "h-6"; // Default value for server rendering
+    }
+    const heights = ["h-4", "h-6", "h-8", "h-10"];
+    return heights[Math.floor(Math.random() * heights.length)];
   };
 
   const beams = [

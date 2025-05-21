@@ -13,6 +13,8 @@ import { useState } from "react";
 import ConfirmationBox from "../shared/ConfirmationBox";
 import { toast } from "sonner";
 import BlogForm from "../forms/BlogForm";
+import isValidImageUrl from "../shared/isValidImageUrl";
+import { deleteBlog } from "@/services/blog.service";
 
 interface BlogCardProps {
   data: TBlog & TMongoose;
@@ -23,14 +25,12 @@ const BlogCard = ({ data, edit = false }: BlogCardProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const { title, content, image, category } = data;
 
-  const deleteBlog = async (id: string) => {
+  const handleDeleteBlog = async (id: string) => {
     const toastId = toast.loading("Deleting blog...");
 
-    const res = await fetch(`/api/blogs/${id}`, {
-      method: "DELETE",
-    });
+    const res = await deleteBlog(id);
 
-    if (res.ok) {
+    if (res.success) {
       toast.success("Blog deleted successfully", {
         id: toastId,
       });
@@ -56,9 +56,10 @@ const BlogCard = ({ data, edit = false }: BlogCardProps) => {
 
           <CardItem className="w-full h-48 relative rounded-lg overflow-hidden">
             <Image
-              src={image}
+              src={isValidImageUrl(image) ? image : "/blog.png"}
               alt={title}
               fill
+              sizes="500"
               className="object-cover"
               priority
             />
@@ -69,7 +70,14 @@ const BlogCard = ({ data, edit = false }: BlogCardProps) => {
           </CardItem>
 
           <CardItem className="text-neutral-500 text-xs sm:text-sm dark:text-neutral-300 line-clamp-3">
-            {content}
+            {content && content.includes("<") && content.includes(">") ? (
+              <div
+                dangerouslySetInnerHTML={{ __html: content }}
+                className="line-clamp-3"
+              />
+            ) : (
+              content
+            )}
           </CardItem>
 
           {edit ? (
@@ -102,7 +110,7 @@ const BlogCard = ({ data, edit = false }: BlogCardProps) => {
                       Delete
                     </p>
                   }
-                  onConfirm={() => deleteBlog(data._id)}
+                  onConfirm={() => handleDeleteBlog(data._id)}
                 />
               </CardItem>
             </div>

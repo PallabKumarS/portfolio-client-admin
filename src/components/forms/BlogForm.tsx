@@ -13,10 +13,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { TBlog, TMongoose } from "@/types/types";
 import ShimmerButton from "../shared/ShimmerButton";
-import { updateBlog } from "@/services/blog.service";
+import { createBlog, updateBlog } from "@/services/blog.service";
+import Tiptap from "../shared/Tiptap";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -52,8 +52,12 @@ export default function BlogForm({
       edit ? "Updating blog..." : "Creating blog..."
     );
 
+    // return console.log(values);
+
     try {
-      const res = await updateBlog(values, data?._id as string);
+      const res = edit
+        ? await updateBlog(values, data?._id as string)
+        : await createBlog(values);
 
       if (res.success) {
         toast.success(res?.message, { id: toastId });
@@ -72,10 +76,7 @@ export default function BlogForm({
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4 w-full mx-auto"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="title"
@@ -83,13 +84,8 @@ export default function BlogForm({
             <FormItem>
               <FormLabel>Title</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Enter blog title..."
-                  type="text"
-                  {...field}
-                />
+                <Input placeholder="Blog title" {...field} />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
@@ -102,13 +98,8 @@ export default function BlogForm({
             <FormItem>
               <FormLabel>Category</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Enter blog category..."
-                  type="text"
-                  {...field}
-                />
+                <Input placeholder="Blog category" {...field} />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
@@ -119,15 +110,10 @@ export default function BlogForm({
           name="image"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image</FormLabel>
+              <FormLabel>Image URL</FormLabel>
               <FormControl>
-                <Input
-                  placeholder="Enter blog image..."
-                  type="text"
-                  {...field}
-                />
+                <Input placeholder="Image URL" {...field} />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
@@ -140,17 +126,15 @@ export default function BlogForm({
             <FormItem>
               <FormLabel>Content</FormLabel>
               <FormControl>
-                <Textarea
-                  placeholder="Enter blog content..."
-                  className="resize-none"
-                  {...field}
-                />
+                <div className="min-h-[200px] w-full">
+                  <Tiptap content={field.value} onChange={field.onChange} />
+                </div>
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
         />
+
         <div className="text-start">
           <ShimmerButton type="submit">
             {edit ? "Update Blog" : "Create Blog"}

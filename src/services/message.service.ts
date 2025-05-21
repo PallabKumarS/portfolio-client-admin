@@ -1,5 +1,7 @@
+"use server";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getValidToken } from "@/lib/verifyToken";
+import { revalidateTag } from "next/cache";
 
 // get all messages
 export const getAllMessages = async () => {
@@ -33,6 +35,8 @@ export const markAsRead = async (id: string) => {
       },
     });
 
+    revalidateTag("messages");
+
     return await res.json();
   } catch (error: any) {
     return error;
@@ -49,6 +53,8 @@ export const deleteMessage = async (id: string) => {
         Authorization: await getValidToken(),
       },
     });
+
+    revalidateTag("messages");
 
     return await res.json();
   } catch (error: any) {

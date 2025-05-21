@@ -1,5 +1,7 @@
+"use server";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getValidToken } from "@/lib/verifyToken";
+import { revalidateTag } from "next/cache";
 import { FieldValues } from "react-hook-form";
 
 // get all blog
@@ -8,8 +10,8 @@ export const getAllBlogs = async () => {
     const res = await fetch(`${process.env.BASE_API}/blogs`, {
       method: "GET",
       next: {
-        revalidate: 60,
         tags: ["blogs"],
+        revalidate: 60,
       },
       headers: {
         "Content-Type": "application/json",
@@ -29,8 +31,8 @@ export const getSingleBlog = async (id: string) => {
     const res = await fetch(`${process.env.BASE_API}/blogs/${id}`, {
       method: "GET",
       next: {
-        revalidate: 60,
         tags: ["blog"],
+        revalidate: 60,
       },
       headers: {
         "Content-Type": "application/json",
@@ -47,13 +49,17 @@ export const getSingleBlog = async (id: string) => {
 // create blog
 export const createBlog = async (data: FieldValues) => {
   try {
-    const res = await fetch(`${process.env.BASE_API}/blog`, {
+    const res = await fetch(`${process.env.BASE_API}/blogs`, {
       method: "POST",
       body: JSON.stringify(data),
       headers: {
+        "Content-Type": "application/json",
         Authorization: await getValidToken(),
       },
     });
+
+    revalidateTag("blogs");
+    revalidateTag("blog");
 
     return await res.json();
   } catch (error: any) {
@@ -73,6 +79,9 @@ export const updateBlog = async (data: FieldValues, id: string) => {
       },
     });
 
+    revalidateTag("blogs");
+    revalidateTag("blog");
+
     return await res.json();
   } catch (error: any) {
     return error;
@@ -89,6 +98,9 @@ export const deleteBlog = async (id: string) => {
         Authorization: await getValidToken(),
       },
     });
+
+    revalidateTag("blogs");
+    revalidateTag("blog");
 
     return await res.json();
   } catch (error: any) {

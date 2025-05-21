@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+"use server";
+
 import { getValidToken } from "@/lib/verifyToken";
 import { FieldValues } from "react-hook-form";
 

@@ -6,6 +6,7 @@ import { AppSidebar } from "@/components/shared/app-sidebar";
 import { ThemeToggle } from "@/components/shared/ThemeToggle";
 import Providers from "@/providers/Provider";
 import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "PKS Portfolio",
@@ -24,7 +25,9 @@ export default async function RootLayout({
           <BackgroundBeamsWithCollision>
             <SidebarProvider className="flex min-h-screen overflow-x-hidden">
               {/* Add overflow-x-hidden */}
-              <AppSidebar />
+              <Suspense>
+                <AppSidebar />
+              </Suspense>
               <div className="flex flex-1 flex-col overflow-x-hidden">
                 {/* Add overflow-x-hidden */}
                 <div className="flex items-center justify-between border-b px-4 py-2">
