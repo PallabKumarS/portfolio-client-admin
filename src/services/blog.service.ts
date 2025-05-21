@@ -3,7 +3,7 @@ import { getValidToken } from "@/lib/verifyToken";
 import { FieldValues } from "react-hook-form";
 
 // get all blog
-export const getAllBlog = async () => {
+export const getAllBlogs = async () => {
   try {
     const res = await fetch(`${process.env.BASE_API}/blogs`, {
       method: "GET",

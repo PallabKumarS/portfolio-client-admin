@@ -123,7 +123,7 @@ export default function ContactForm() {
             </FormItem>
           )}
         />
-        <Button effect={"gooeyLeft"} type="submit" className="h-8 w-full">
+        <Button type="submit" className="h-8 w-full">
           Submit
         </Button>
       </form>

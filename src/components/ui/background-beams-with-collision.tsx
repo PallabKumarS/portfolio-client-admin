@@ -229,10 +229,13 @@ const CollisionMechanism = React.forwardRef<
 
     updatePageHeight();
     window.addEventListener("resize", updatePageHeight);
-    window.addEventListener("scroll", updatePageHeight);
+    const timeoutId = setTimeout(() => {
+      updatePageHeight();
+    }, 3000);
 
     return () => {
       window.removeEventListener("resize", updatePageHeight);
+      clearTimeout(timeoutId);
     };
   }, [parentRef]);
 

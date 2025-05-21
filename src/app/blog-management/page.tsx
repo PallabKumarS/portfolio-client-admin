@@ -1,11 +1,17 @@
-import ContainerComponent from "@/components/shared/ContainerComponent";
+import { Metadata } from "next";
+import AdminBlogPage from "./AdminBlogPage";
 
-const page = () => {
+export const metadata: Metadata = {
+  title: "Dashboard | Blog Management",
+  description: "Add, Edit, Delete, View Blogs",
+};
+
+const BlogManageMentPage = () => {
   return (
-    <ContainerComponent>
-      <h1>This is page Component</h1>
-    </ContainerComponent>
+    <div>
+      <AdminBlogPage />
+    </div>
   );
 };
 
-export default page;
+export default BlogManageMentPage;
