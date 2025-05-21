@@ -11,8 +11,6 @@ const authorizedEmail = [
 export const middleware = async (request: NextRequest) => {
   const userInfo = await getCurrentUser();
 
-  console.log(userInfo);
-
   const { pathname } = request.nextUrl;
 
   if (!userInfo) {

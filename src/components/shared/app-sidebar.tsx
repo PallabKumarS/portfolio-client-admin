@@ -34,9 +34,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { config } from "@/middleware";
 import { deleteCookie } from "@/services/auth.service";
 import { useEffect, useState } from "react";
-import { getMe } from "@/services/user.service";
-import { TUser } from "@/types/types";
 import Logo from "./Logo";
+import { DecodedUser, getCurrentUser } from "@/lib/verifyToken";
 
 // common routes for all users
 const items = [
@@ -65,13 +64,13 @@ const items = [
 export function AppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [user, setUser] = useState<TUser>();
+  const [user, setUser] = useState<DecodedUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchUser = async () => {
-      const res = await getMe();
-      setUser(res?.data);
+      const user = await getCurrentUser();
+      setUser(user);
       setIsLoading(false);
     };
 
@@ -193,15 +192,11 @@ export function AppSidebar() {
                 ) : (
                   <>
                     <Avatar className="h-8 w-8 ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all">
-                      {user?.image ? (
-                        <AvatarImage src={user?.image} alt={user?.name} />
-                      ) : (
-                        <AvatarImage src="https://github.com/shadcn.png" />
-                      )}
-                      <AvatarFallback>LK</AvatarFallback>
+                      <AvatarImage src="https://github.com/shadcn.png" />
+                      <AvatarFallback>PKS</AvatarFallback>
                     </Avatar>
                     <div className="flex-1 text-left">
-                      <p className="text-sm font-medium">{user?.name}</p>
+                      <p className="text-sm font-medium">Pallab Kumar Sarker</p>
                       <p className="text-xs text-muted-foreground capitalize">
                         {user?.email}
                       </p>

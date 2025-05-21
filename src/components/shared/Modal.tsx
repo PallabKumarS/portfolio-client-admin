@@ -7,23 +7,23 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ReactNode } from "react";
+import { Dispatch, ReactNode, SetStateAction } from "react";
 type TModalProps = {
   title: string;
   trigger: ReactNode;
   content: ReactNode;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
+  isOpen?: boolean;
+  setIsOpen?: Dispatch<SetStateAction<boolean>>;
 };
 export function Modal({
   title,
   trigger,
   content,
-  open,
-  onOpenChange,
+  isOpen,
+  setIsOpen,
 }: TModalProps) {
   return (
-    <Dialog onOpenChange={onOpenChange} open={open}>
+    <Dialog onOpenChange={setIsOpen} open={isOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="max-h-[calc(100vh-4rem)] overflow-y-auto bg-card min-w-[290px] w-3/4">
         <DialogHeader>

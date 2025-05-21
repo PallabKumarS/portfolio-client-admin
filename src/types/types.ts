@@ -7,6 +7,7 @@ export type TProject = {
   clientRepo?: string;
   serverRepo?: string;
   videoLink?: string;
+  isFeatured?: boolean;
 };
 
 export type TMessage = {
@@ -15,16 +16,49 @@ export type TMessage = {
   name: string;
 };
 
+export interface TSkill {
+  category: "frontend" | "backend" | "tools";
+  name: string;
+  icon: string;
+  proficiency: number;
+}
+
+export type TEducation = {
+  degree: string;
+  institution: string;
+  department?: string;
+  year?: string;
+};
+
+export type TExperience = {
+  title: string;
+  company: string;
+  duration: string;
+  description: string;
+  technologies?: string[];
+};
+
+export type TAbout = {
+  image: string;
+  name: string;
+  title: string;
+  bio: string;
+  education: TEducation[];
+  experience?: TExperience[];
+  address: string;
+  resumeLink?: string;
+};
+
+export type TBlog = {
+  title: string;
+  content: string;
+  image: string;
+  category: string;
+};
+
 export type TMongoose = {
   _id: string;
   __v: number;
   createdAt: Date;
   updatedAt: Date;
-};
-
-export type TUser = {
-  name?: string;
-  email?: string;
-  image?: string;
-  password?: string;
 };

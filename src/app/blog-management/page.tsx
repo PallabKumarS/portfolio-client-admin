@@ -1,8 +1,10 @@
+import ContainerComponent from "@/components/shared/ContainerComponent";
+
 const page = () => {
   return (
-    <div>
+    <ContainerComponent>
       <h1>This is page Component</h1>
-    </div>
+    </ContainerComponent>
   );
 };
 

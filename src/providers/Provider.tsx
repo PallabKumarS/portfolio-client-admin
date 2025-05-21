@@ -10,8 +10,8 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
       defaultTheme="light"
       disableTransitionOnChange
     >
-        <Toaster richColors position="top-right" closeButton dir="ltr" />
-        {children}
+      {children}
+      <Toaster richColors position="top-right" closeButton dir="ltr" />
     </ThemeProvider>
   );
 };

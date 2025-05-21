@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
+import { getValidToken } from "@/lib/verifyToken";
 import { TProject } from "@/types/types";
 import { revalidateTag } from "next/cache";
 
@@ -10,6 +11,10 @@ export const getAllProjects = async () => {
     const res = await fetch(`${process.env.BASE_API}/projects`, {
       next: {
         tags: ["projects"],
+        revalidate: 60,
+      },
+      headers: {
+        Authorization: await getValidToken(),
       },
     });
     return await res.json();
@@ -24,6 +29,10 @@ export const getProjectDetails = async (projectId: string) => {
     const res = await fetch(`${process.env.BASE_API}/projects/${projectId}`, {
       next: {
         tags: ["project"],
+        revalidate: 60,
+      },
+      headers: {
+        Authorization: await getValidToken(),
       },
     });
     return await res.json();
@@ -39,11 +48,13 @@ export const createProject = async (data: TProject) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: await getValidToken(),
       },
       body: JSON.stringify(data),
     });
 
     revalidateTag("projects");
+    revalidateTag("project");
 
     return await res.json();
   } catch (error: any) {
@@ -58,6 +69,7 @@ export const updateProject = async (data: TProject, projectId: string) => {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        Authorization: await getValidToken(),
       },
       body: JSON.stringify(data),
     });
@@ -65,20 +77,6 @@ export const updateProject = async (data: TProject, projectId: string) => {
     revalidateTag("projects");
     revalidateTag("project");
 
-    return await res.json();
-  } catch (error: any) {
-    return error;
-  }
-};
-
-// get all messages
-export const getAllMessages = async () => {
-  try {
-    const res = await fetch(`${process.env.BASE_API}/messages`, {
-      next: {
-        tags: ["messages"],
-      },
-    });
     return await res.json();
   } catch (error: any) {
     return error;

@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import AdminProjectPage from "./AdminProjectPage";
 import { getAllProjects } from "@/services/project.service";
+import ContainerComponent from "@/components/shared/ContainerComponent";
 
 export const metadata: Metadata = {
   title: "Project Management",
@@ -10,7 +11,11 @@ export const metadata: Metadata = {
 const ProjectManageMentPage = async () => {
   const res = await getAllProjects();
 
-  return <AdminProjectPage data={res?.data} />;
+  return (
+    <ContainerComponent>
+      <AdminProjectPage data={res?.data} />
+    </ContainerComponent>
+  );
 };
 
 export default ProjectManageMentPage;

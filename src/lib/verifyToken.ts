@@ -65,7 +65,7 @@ export const getToken = async () => {
   return accessToken;
 };
 
-type DecodedUser = {
+export type DecodedUser = {
   userId: string;
   email: string;
   iat: number;

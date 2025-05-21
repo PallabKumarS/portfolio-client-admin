@@ -6,7 +6,7 @@ import ContainerComponent from "./ContainerComponent";
 const Footer = () => {
   return (
     <div className="py-10 footer-gradient w-full">
-      <ContainerComponent className=" ">
+      <ContainerComponent className="">
         <div className="md:flex items-center gap-4 justify-between space-y-3 md:space-y-0">
           {/* Logo and Created With Section */}
           <div className="text-center">
