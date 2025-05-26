@@ -23,7 +23,7 @@ export const middleware = async (request: NextRequest) => {
     }
   }
 
-  if (userInfo?.email && !authorizedEmail.includes(userInfo?.email)) {
+  if (!authorizedEmail.includes(userInfo?.email)) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -31,5 +31,11 @@ export const middleware = async (request: NextRequest) => {
 };
 
 export const config = {
-  matcher: ["/", "/blog-management", "/messages", "/project-management"],
+  matcher: [
+    "/",
+    "/blog-management",
+    "/messages",
+    "/project-management",
+    "/skill-management",
+  ],
 };

@@ -51,7 +51,7 @@ export default function LoginForm() {
         if (redirectPath) {
           router.push(redirectPath);
         } else {
-          router.push("/dashboard/profile");
+          router.push("/");
         }
       } else {
         toast.error(res?.message, { id: toastId });

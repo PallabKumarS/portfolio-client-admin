@@ -10,6 +10,7 @@ import {
   LucideProjector,
   LucideFileTerminal,
   MessageCircleMoreIcon,
+  ArrowRightLeft,
 } from "lucide-react";
 
 import {
@@ -40,17 +41,22 @@ import { DecodedUser, getCurrentUser } from "@/lib/verifyToken";
 // common routes for all users
 const items = [
   {
-    title: "Profile",
+    title: "About",
     icon: User,
     href: "/",
   },
   {
-    title: "Project Management",
+    title: "Skills",
+    icon: ArrowRightLeft,
+    href: "/skill-management",
+  },
+  {
+    title: "Projects",
     icon: LucideProjector,
     href: `/project-management`,
   },
   {
-    title: "Blog Management",
+    title: "Blogs",
     icon: LucideFileTerminal,
     href: `/blog-management`,
   },
