@@ -29,6 +29,7 @@ const AboutPage = () => {
       try {
         const res = await getAbout();
         setAbout(res?.data[0]);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (err: any) {
         console.error(err.message);
       } finally {
@@ -96,9 +97,10 @@ const AboutPage = () => {
               {about.resumeLink && (
                 <Button variant="outline" className="w-full" asChild>
                   <a
-                    href={about.resumeLink}
+                    href={convertToDirectDownloadLink(about.resumeLink)}
                     target="_blank"
                     rel="noopener noreferrer"
+                    download
                   >
                     <Download className="w-4 h-4 mr-2" />
                     Download Resume
@@ -201,3 +203,28 @@ const AboutPage = () => {
 };
 
 export default AboutPage;
+
+const convertToDirectDownloadLink = (driveLink: string): string => {
+  // Check if it's a Google Drive link
+  if (driveLink.includes("drive.google.com")) {
+    let fileId = "";
+
+    // Format: https://drive.google.com/file/d/FILE_ID/view
+    const viewMatch = driveLink.match(/\/file\/d\/([a-zA-Z0-9-_]+)/);
+    if (viewMatch) {
+      fileId = viewMatch[1];
+    }
+
+    // Format: https://drive.google.com/open?id=FILE_ID
+    const openMatch = driveLink.match(/[?&]id=([a-zA-Z0-9-_]+)/);
+    if (openMatch) {
+      fileId = openMatch[1];
+    }
+
+    if (fileId) {
+      return `https://drive.google.com/uc?export=download&id=${fileId}`;
+    }
+  }
+
+  return driveLink;
+};

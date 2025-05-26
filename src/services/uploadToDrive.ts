@@ -1,10 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
 import { google } from "googleapis";
-import fs from "fs/promises";
-import { createReadStream } from "fs";
+import { Readable } from "stream";
 
-// Load and parse service account key from env variable
 const serviceAccountKeyBase64 = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
 
 if (!serviceAccountKeyBase64) {
@@ -18,11 +17,37 @@ const serviceAccountKey = JSON.parse(
 async function getDriveClient() {
   const auth = new google.auth.GoogleAuth({
     credentials: serviceAccountKey,
-    scopes: ["https://www.googleapis.com/auth/drive.file"],
+    scopes: [
+      "https://www.googleapis.com/auth/drive.file",
+      "https://www.googleapis.com/auth/drive", // Try broader scope
+    ],
   });
 
   return google.drive({ version: "v3", auth });
 }
+
+const extractFileId = (url: string): string => {
+  // If it's already just a file ID
+  if (!url.includes("http") && url.length > 20) {
+    return url;
+  }
+
+  let fileId = "";
+
+  // Format: https://drive.google.com/file/d/FILE_ID/view
+  const viewMatch = url.match(/\/file\/d\/([a-zA-Z0-9-_]+)/);
+  if (viewMatch) {
+    fileId = viewMatch[1];
+  }
+
+  // Format: https://drive.google.com/open?id=FILE_ID
+  const openMatch = url.match(/[?&]id=([a-zA-Z0-9-_]+)/);
+  if (openMatch) {
+    fileId = openMatch[1];
+  }
+
+  return fileId || url;
+};
 
 export async function uploadResumeFile(formData: FormData) {
   const file = formData.get("file") as File | null;
@@ -32,28 +57,51 @@ export async function uploadResumeFile(formData: FormData) {
     throw new Error("Missing file or resumeLink");
   }
 
-  // Convert the Web File to a Buffer and write to /tmp
+  const fileId = extractFileId(resumeFileId);
+
+  // Convert the Web File to a Buffer and create stream
   const buffer = Buffer.from(await file.arrayBuffer());
-  const tmpPath = `/tmp/${file.name}`;
-  await fs.writeFile(tmpPath, buffer);
+  const stream = Readable.from(buffer);
 
   const drive = await getDriveClient();
 
-  // Update the existing Google Drive file content
-  const response = await drive.files.update({
-    fileId: resumeFileId,
-    media: {
-      mimeType: file.type,
-      body: createReadStream(tmpPath),
-    },
-  });
+  try {
+    // Step 1: Verify we can access the file
 
-  // Cleanup temp file
-  await fs.unlink(tmpPath);
+    const fileCheck = await drive.files.get({
+      fileId,
+      fields: "id, name, mimeType, capabilities",
+    });
 
-  return {
-    success: true,
-    fileId: response.data.id,
-    driveLink: `https://drive.google.com/file/d/${response.data.id}/view`,
-  };
+    // Step 2: Check if we can edit this file
+    if (fileCheck.data.capabilities && !fileCheck.data.capabilities.canEdit) {
+      throw new Error(
+        "Service account does not have edit permissions on this file"
+      );
+    }
+
+    // Step 3: Try to update the file
+
+    const response = await drive.files.update({
+      fileId,
+      media: {
+        mimeType: file.type,
+        body: stream,
+      },
+      fields: "id, name, webViewLink",
+    });
+
+    return {
+      success: true,
+      fileId: response.data.id,
+      driveLink:
+        response.data.webViewLink ||
+        `https://drive.google.com/file/d/${response.data.id}/view`,
+    };
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
 }

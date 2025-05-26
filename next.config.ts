@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  experimental: {
+    serverActions: {
+      allowedOrigins: ["https://www.googleapis.com"],
+      bodySizeLimit: "20mb",
+    },
+  },
 };
 
 export default nextConfig;
