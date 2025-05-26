@@ -6,6 +6,7 @@ const authRoutes = ["/login"];
 const authorizedEmail = [
   "pallabkumar26@gmail.com",
   "pallabkumar2699@gmail.com",
+  "admin@gmail.com",
 ];
 
 export const middleware = async (request: NextRequest) => {
