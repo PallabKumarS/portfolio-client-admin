@@ -57,7 +57,7 @@ export const updateSkill = async (data: FieldValues, id: string) => {
         Authorization: await getValidToken(),
       },
     });
-
+    revalidateTag("skills");
     return await res.json();
   } catch (error: any) {
     return error;

@@ -2,6 +2,7 @@
 "use server";
 
 import { getValidToken } from "@/lib/verifyToken";
+import { revalidateTag } from "next/cache";
 import { FieldValues } from "react-hook-form";
 
 // get about
@@ -39,6 +40,7 @@ export const createAbout = async (data: FieldValues) => {
       },
     });
 
+    revalidateTag("about");
     return await res.json();
   } catch (error: any) {
     return error;
@@ -57,6 +59,7 @@ export const updateAbout = async (data: FieldValues, id: string) => {
       },
     });
 
+    revalidateTag("about");
     return await res.json();
   } catch (error: any) {
     return error;
